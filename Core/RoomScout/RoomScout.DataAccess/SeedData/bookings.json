@@ -1,0 +1,30 @@
+[
+  {
+    "hotelId": "H1",
+    "arrival": "20250901",
+    "departure": "20250903",
+    "roomType": "DBL",
+    "roomRate": "Prepaid"
+  },
+  {
+    "hotelId": "H1",
+    "arrival": "20250902",
+    "departure": "20250905",
+    "roomType": "SGL",
+    "roomRate": "Standard"
+  },
+  {
+    "hotelId": "H1",
+    "arrival": "20250907",
+    "departure": "20250909",
+    "roomType": "SGL",
+    "roomRate": "Standard"
+  },
+  {
+    "hotelId": "H1",
+    "arrival": "20250903",
+    "departure": "20250909",
+    "roomType": "SGL",
+    "roomRate": "Standard"
+  }
+]
