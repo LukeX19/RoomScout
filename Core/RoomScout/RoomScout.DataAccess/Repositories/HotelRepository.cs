@@ -5,7 +5,7 @@ namespace RoomScout.DataAccess.Repositories
 {
     public class HotelRepository : BaseRepository<Hotel>, IHotelRepository
     {
-        public HotelRepository(ICollection<Hotel> hotels) : base(hotels) { }
+        public HotelRepository(DataContext context) : base(context.Hotels) { }
 
         public async Task<Hotel?> GetByIdAsync(string hotelId)
         {
