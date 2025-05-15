@@ -1,4 +1,5 @@
-﻿using RoomScout.Business.Interfaces;
+﻿using RoomScout.Business.Commands;
+using RoomScout.Business.Interfaces;
 using RoomScout.Business.Services;
 using RoomScout.DataAccess;
 using RoomScout.DataAccess.Interfaces;
@@ -16,38 +17,34 @@ namespace RoomScout.Presentation
             var context = new DataContext();
             await context.InitializeAsync(hotelsPath, bookingsPath);
 
+            // Set up repositories
             IHotelRepository hotelRepo = new HotelRepository(context);
             IBookingRepository bookingRepo = new BookingRepository(context);
 
+            // Set up services
             IHotelService hotelService = new HotelService(hotelRepo);
             IBookingService bookingService = new BookingService(bookingRepo);
+            IAvailabilityService availabilityService = new AvailabilityService(hotelService, bookingService);
 
-            var hotels = await hotelService.GetAllHotelsAsync();
-            Console.WriteLine("Hotels:");
-            foreach (var hotel in hotels)
+            // Set up command handlers
+            var availabilityHandler = new AvailabilityCommandHandler(availabilityService);
+
+            Console.WriteLine("Enter an Availability command or press Enter to exit:");
+            while (true)
             {
-                Console.WriteLine($"- {hotel.Id}: {hotel.Name} ({hotel.Rooms.Count} rooms)");
-            }
+                Console.Write("> ");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input)) break;
 
-            Console.WriteLine();
-
-            var h1 = await hotelService.GetHotelByIdAsync("H1");
-            if (h1 != null)
-            {
-                Console.WriteLine($"Hotel {h1.Id} ({h1.Name}):");
-                foreach (var room in h1.Rooms)
+                if (input.StartsWith("Availability(", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"- Room {room.RoomId} ({room.RoomType})");
+                    var result = await availabilityHandler.ExecuteAsync(input);
+                    Console.WriteLine(result);
                 }
-            }
-
-            Console.WriteLine();
-
-            var bookings = await bookingService.GetAllBookingsAsync();
-            Console.WriteLine("Bookings:");
-            foreach (var booking in bookings)
-            {
-                Console.WriteLine($"- {booking.HotelId}: {booking.RoomType}, {booking.Arrival:yyyy-MM-dd} -> {booking.Departure:yyyy-MM-dd}");
+                else
+                {
+                    Console.WriteLine("Unsupported command. Only Availability(...) is supported right now.");
+                }
             }
         }
     }
