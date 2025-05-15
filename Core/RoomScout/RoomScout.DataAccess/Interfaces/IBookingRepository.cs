@@ -1,6 +1,8 @@
-﻿namespace RoomScout.DataAccess.Interfaces
+﻿using RoomScout.DataAccess.Models;
+
+namespace RoomScout.DataAccess.Interfaces
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IBaseRepository<Booking>
     {
 
     }

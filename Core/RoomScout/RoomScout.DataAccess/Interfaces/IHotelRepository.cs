@@ -2,7 +2,7 @@
 
 namespace RoomScout.DataAccess.Interfaces
 {
-    public interface IHotelRepository
+    public interface IHotelRepository : IBaseRepository<Hotel>
     {
         Task<Hotel?> GetByIdAsync(string hotelId);
     }
