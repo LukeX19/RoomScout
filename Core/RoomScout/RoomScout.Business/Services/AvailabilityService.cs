@@ -37,10 +37,9 @@ namespace RoomScout.Business.Services
                 .Where(b =>
                     b.HotelId == hotelId &&
                     b.RoomType == roomType &&
-                    DatesOverlap(start, end ?? start, b.Arrival, b.Departure))
+                    DatesOverlap(start, end ?? start.AddDays(1), b.Arrival, b.Departure))
                 .ToList();
 
-            // Count how many rooms are booked in that period
             var maxRoomsBooked = relevantBookings.Count;
 
             var availableRooms = allRoomsOfType.Count - maxRoomsBooked;

@@ -47,7 +47,7 @@ namespace RoomScout.Business.Commands
                 end = parsedEnd;
             }
 
-            var result = await _availabilityService.GetAvailabilityAsync(hotelId, start, end ?? start.AddDays(1), roomType);
+            var result = await _availabilityService.GetAvailabilityAsync(hotelId, start, end, roomType);
 
             return result.ToString();
         }
