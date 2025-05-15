@@ -1,4 +1,7 @@
-﻿using RoomScout.DataAccess;
+﻿using RoomScout.Business.Interfaces;
+using RoomScout.Business.Services;
+using RoomScout.DataAccess;
+using RoomScout.DataAccess.Interfaces;
 using RoomScout.DataAccess.Repositories;
 
 namespace RoomScout.Presentation
@@ -13,10 +16,13 @@ namespace RoomScout.Presentation
             var context = new DataContext();
             await context.InitializeAsync(hotelsPath, bookingsPath);
 
-            var hotelRepo = new HotelRepository(context);
-            var bookingRepo = new BookingRepository(context);
+            IHotelRepository hotelRepo = new HotelRepository(context);
+            IBookingRepository bookingRepo = new BookingRepository(context);
 
-            var hotels = await hotelRepo.GetAllAsync();
+            IHotelService hotelService = new HotelService(hotelRepo);
+            IBookingService bookingService = new BookingService(bookingRepo);
+
+            var hotels = await hotelService.GetAllHotelsAsync();
             Console.WriteLine("Hotels:");
             foreach (var hotel in hotels)
             {
@@ -25,7 +31,7 @@ namespace RoomScout.Presentation
 
             Console.WriteLine();
 
-            var h1 = await hotelRepo.GetByIdAsync("H1");
+            var h1 = await hotelService.GetHotelByIdAsync("H1");
             if (h1 != null)
             {
                 Console.WriteLine($"Hotel {h1.Id} ({h1.Name}):");
@@ -37,7 +43,7 @@ namespace RoomScout.Presentation
 
             Console.WriteLine();
 
-            var bookings = await bookingRepo.GetAllAsync();
+            var bookings = await bookingService.GetAllBookingsAsync();
             Console.WriteLine("Bookings:");
             foreach (var booking in bookings)
             {
