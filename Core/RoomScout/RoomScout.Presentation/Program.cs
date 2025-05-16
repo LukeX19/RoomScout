@@ -1,4 +1,8 @@
-﻿using RoomScout.DataAccess;
+﻿using RoomScout.Business.Commands;
+using RoomScout.Business.Interfaces;
+using RoomScout.Business.Services;
+using RoomScout.DataAccess;
+using RoomScout.DataAccess.Interfaces;
 using RoomScout.DataAccess.Repositories;
 
 namespace RoomScout.Presentation
@@ -13,35 +17,45 @@ namespace RoomScout.Presentation
             var context = new DataContext();
             await context.InitializeAsync(hotelsPath, bookingsPath);
 
-            var hotelRepo = new HotelRepository(context);
-            var bookingRepo = new BookingRepository(context);
+            // Set up repositories
+            IHotelRepository hotelRepo = new HotelRepository(context);
+            IBookingRepository bookingRepo = new BookingRepository(context);
 
-            var hotels = await hotelRepo.GetAllAsync();
-            Console.WriteLine("Hotels:");
-            foreach (var hotel in hotels)
+            // Set up services
+            IHotelService hotelService = new HotelService(hotelRepo);
+            IBookingService bookingService = new BookingService(bookingRepo);
+            IAvailabilityService availabilityService = new AvailabilityService(hotelService, bookingService);
+            ISearchService searchService = new SearchService(availabilityService);
+
+            // Set up command handlers
+            var availabilityHandler = new AvailabilityCommandHandler(availabilityService);
+            var searchHandler = new SearchCommandHandler(searchService);
+
+            Console.WriteLine("Enter a command (Availability(...) or Search(...)), or press Enter to exit:");
+            while (true)
             {
-                Console.WriteLine($"- {hotel.Id}: {hotel.Name} ({hotel.Rooms.Count} rooms)");
-            }
-
-            Console.WriteLine();
-
-            var h1 = await hotelRepo.GetByIdAsync("H1");
-            if (h1 != null)
-            {
-                Console.WriteLine($"Hotel {h1.Id} ({h1.Name}):");
-                foreach (var room in h1.Rooms)
+                Console.Write("> ");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
                 {
-                    Console.WriteLine($"- Room {room.RoomId} ({room.RoomType})");
+                    break;
                 }
-            }
 
-            Console.WriteLine();
+                string result;
+                if (input.StartsWith("Availability(", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = await availabilityHandler.ExecuteAsync(input);
+                }
+                else if (input.StartsWith("Search(", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = await searchHandler.ExecuteAsync(input);
+                }
+                else
+                {
+                    result = "Unsupported command. Only Availability(...) and Search(...) are supported right now.";
+                }
 
-            var bookings = await bookingRepo.GetAllAsync();
-            Console.WriteLine("Bookings:");
-            foreach (var booking in bookings)
-            {
-                Console.WriteLine($"- {booking.HotelId}: {booking.RoomType}, {booking.Arrival:yyyy-MM-dd} -> {booking.Departure:yyyy-MM-dd}");
+                Console.WriteLine(result);
             }
         }
     }
