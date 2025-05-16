@@ -25,26 +25,37 @@ namespace RoomScout.Presentation
             IHotelService hotelService = new HotelService(hotelRepo);
             IBookingService bookingService = new BookingService(bookingRepo);
             IAvailabilityService availabilityService = new AvailabilityService(hotelService, bookingService);
+            ISearchService searchService = new SearchService(availabilityService);
 
             // Set up command handlers
             var availabilityHandler = new AvailabilityCommandHandler(availabilityService);
+            var searchHandler = new SearchCommandHandler(searchService);
 
-            Console.WriteLine("Enter an Availability command or press Enter to exit:");
+            Console.WriteLine("Enter a command (Availability(...) or Search(...)), or press Enter to exit:");
             while (true)
             {
                 Console.Write("> ");
                 var input = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(input)) break;
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    break;
+                }
 
+                string result;
                 if (input.StartsWith("Availability(", StringComparison.OrdinalIgnoreCase))
                 {
-                    var result = await availabilityHandler.ExecuteAsync(input);
-                    Console.WriteLine(result);
+                    result = await availabilityHandler.ExecuteAsync(input);
+                }
+                else if (input.StartsWith("Search(", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = await searchHandler.ExecuteAsync(input);
                 }
                 else
                 {
-                    Console.WriteLine("Unsupported command. Only Availability(...) is supported right now.");
+                    result = "Unsupported command. Only Availability(...) and Search(...) are supported right now.";
                 }
+
+                Console.WriteLine(result);
             }
         }
     }

@@ -32,7 +32,9 @@ namespace RoomScout.Business.Commands
             var roomTypeStr = args[2].Trim().ToUpper();
 
             if (!Enum.TryParse<RoomCode>(roomTypeStr, true, out var roomType))
+            {
                 return $"Invalid room type: '{roomTypeStr}'";
+            }
 
             var dates = dateInput.Split('-');
             if (!DateTime.TryParseExact(dates[0], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var start))
