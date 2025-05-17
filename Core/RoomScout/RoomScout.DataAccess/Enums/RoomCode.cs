@@ -3,7 +3,6 @@
     public enum RoomCode
     {
         SGL,
-        DBL,
-        TPL
+        DBL
     }
 }

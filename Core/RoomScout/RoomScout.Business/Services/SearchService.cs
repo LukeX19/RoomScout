@@ -1,5 +1,6 @@
 ﻿using RoomScout.Business.Interfaces;
 using RoomScout.DataAccess.Enums;
+using RoomScout.DataAccess.Models;
 
 namespace RoomScout.Business.Services
 {
@@ -12,7 +13,7 @@ namespace RoomScout.Business.Services
             _availabilityService = availabilityService;
         }
 
-        public async Task<ICollection<(DateTime start, DateTime end, int available)>> SearchAvailabilityAsync(string hotelId, int numberOfDays, RoomCode roomType)
+        public async Task<ICollection<(DateTime start, DateTime end, int available)>> SearchAvailabilityAsync(Hotel hotel, int numberOfDays, RoomCode roomType)
         {
             //var today = new DateTime(2025, 9, 1);
             var today = DateTime.Today;
@@ -27,7 +28,7 @@ namespace RoomScout.Business.Services
                 var start = today.AddDays(i);
                 var end = start.AddDays(1);
 
-                var available = await _availabilityService.GetAvailabilityAsync(hotelId, start, end, roomType);
+                var available = await _availabilityService.GetAvailabilityAsync(hotel, start, end, roomType);
                 if (available <= 0)
                 {
                     // Close existing range
