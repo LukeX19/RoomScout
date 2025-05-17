@@ -6,10 +6,12 @@ namespace RoomScout.Business.Commands
 {
     public class AvailabilityCommandHandler : ICommandHandler
     {
+        private readonly IHotelService _hotelService;
         private readonly IAvailabilityService _availabilityService;
 
-        public AvailabilityCommandHandler(IAvailabilityService availabilityService)
+        public AvailabilityCommandHandler(IHotelService hotelService, IAvailabilityService availabilityService)
         {
+            _hotelService = hotelService;
             _availabilityService = availabilityService;
         }
 
@@ -49,7 +51,19 @@ namespace RoomScout.Business.Commands
                 end = parsedEnd;
             }
 
-            var result = await _availabilityService.GetAvailabilityAsync(hotelId, start, end, roomType);
+            var hotel = await _hotelService.GetHotelByIdAsync(hotelId);
+            if (hotel == null)
+            {
+                return $"Hotel '{hotelId}' was not found.";
+            }
+
+            var hasRoomType = hotel.Rooms.Any(r => r.RoomType == roomType);
+            if (!hasRoomType)
+            {
+                return $"Room type '{roomType}' was not found in hotel '{hotelId}'.";
+            }
+
+            var result = await _availabilityService.GetAvailabilityAsync(hotel, start, end, roomType);
 
             return result.ToString();
         }

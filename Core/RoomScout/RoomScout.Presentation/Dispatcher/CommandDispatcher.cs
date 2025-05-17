@@ -18,11 +18,11 @@ namespace RoomScout.Presentation.Dispatcher
 
         public async Task<string> DispatchAsync(string input)
         {
-            foreach (var kvp in _handlers)
+            foreach (var pair in _handlers)
             {
-                if (input.StartsWith($"{kvp.Key}(", StringComparison.OrdinalIgnoreCase))
+                if (input.StartsWith($"{pair.Key}(", StringComparison.OrdinalIgnoreCase))
                 {
-                    return await kvp.Value.ExecuteAsync(input);
+                    return await pair.Value.ExecuteAsync(input);
                 }
             }
 

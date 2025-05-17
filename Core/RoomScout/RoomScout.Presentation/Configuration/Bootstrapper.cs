@@ -25,12 +25,12 @@ namespace RoomScout.Presentation.Configuration
             // Services
             IHotelService hotelService = new HotelService(hotelRepo);
             IBookingService bookingService = new BookingService(bookingRepo);
-            IAvailabilityService availabilityService = new AvailabilityService(hotelService, bookingService);
+            IAvailabilityService availabilityService = new AvailabilityService(bookingService);
             ISearchService searchService = new SearchService(availabilityService);
 
             // Handlers
-            var availabilityHandler = new AvailabilityCommandHandler(availabilityService);
-            var searchHandler = new SearchCommandHandler(searchService);
+            var availabilityHandler = new AvailabilityCommandHandler(hotelService, availabilityService);
+            var searchHandler = new SearchCommandHandler(hotelService, searchService);
 
             // Dispatcher
             var dispatcher = new CommandDispatcher();

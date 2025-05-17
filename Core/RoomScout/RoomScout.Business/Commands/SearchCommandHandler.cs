@@ -5,10 +5,12 @@ namespace RoomScout.Business.Commands
 {
     public class SearchCommandHandler : ICommandHandler
     {
+        private readonly IHotelService _hotelService;
         private readonly ISearchService _searchService;
 
-        public SearchCommandHandler(ISearchService searchService)
+        public SearchCommandHandler(IHotelService hotelService, ISearchService searchService)
         {
+            _hotelService = hotelService;
             _searchService = searchService;
         }
 
@@ -40,7 +42,19 @@ namespace RoomScout.Business.Commands
                 return $"Invalid room type: '{roomTypeStr}'";
             }
 
-            var results = await _searchService.SearchAvailabilityAsync(hotelId, numberOfDays, roomType);
+            var hotel = await _hotelService.GetHotelByIdAsync(hotelId);
+            if (hotel == null)
+            {
+                return $"Hotel '{hotelId}' was not found.";
+            }
+
+            var hasRoomType = hotel.Rooms.Any(r => r.RoomType == roomType);
+            if (!hasRoomType)
+            {
+                return $"Room type '{roomType}' was not found in hotel '{hotelId}'.";
+            }
+
+            var results = await _searchService.SearchAvailabilityAsync(hotel, numberOfDays, roomType);
             if (!results.Any())
             {
                 return "";
