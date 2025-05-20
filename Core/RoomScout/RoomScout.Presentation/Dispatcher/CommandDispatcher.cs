@@ -1,4 +1,5 @@
 ﻿using RoomScout.Business.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace RoomScout.Presentation.Dispatcher
 {
@@ -18,9 +19,18 @@ namespace RoomScout.Presentation.Dispatcher
 
         public async Task<string> DispatchAsync(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return "Empty command.";
+            }
+
+            input = input.Trim();
+
             foreach (var pair in _handlers)
             {
-                if (input.StartsWith($"{pair.Key}(", StringComparison.OrdinalIgnoreCase))
+                // Regex: optional spaces
+                var pattern = $@"^{pair.Key}\s*\(";
+                if (Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase))
                 {
                     return await pair.Value.ExecuteAsync(input);
                 }
