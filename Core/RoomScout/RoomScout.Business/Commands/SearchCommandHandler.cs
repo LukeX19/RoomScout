@@ -1,5 +1,6 @@
 ﻿using RoomScout.Business.Interfaces;
 using RoomScout.DataAccess.Enums;
+using System.Text.RegularExpressions;
 
 namespace RoomScout.Business.Commands
 {
@@ -16,12 +17,19 @@ namespace RoomScout.Business.Commands
 
         public async Task<string> ExecuteAsync(string command)
         {
-            var cleaned = command
-                .Replace("Search(", "", StringComparison.OrdinalIgnoreCase)
-                .Replace(")", "", StringComparison.OrdinalIgnoreCase)
-                .Trim();
+            command = command.Trim();
 
-            var args = cleaned.Split(',');
+            // Regex: optional spaces
+            var pattern = @"^Search\s*\(";
+            command = Regex.Replace(command, pattern, "", RegexOptions.IgnoreCase);
+
+            // Remove the final closing parenthesis if it exists
+            if (command.EndsWith(")"))
+            {
+                command = command.Substring(0, command.Length - 1).Trim();
+            }
+
+            var args = command.Split(',');
 
             if (args.Length != 3)
             {

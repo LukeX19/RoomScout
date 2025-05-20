@@ -1,6 +1,7 @@
 ﻿using RoomScout.Business.Interfaces;
 using RoomScout.DataAccess.Enums;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace RoomScout.Business.Commands
 {
@@ -17,12 +18,19 @@ namespace RoomScout.Business.Commands
 
         public async Task<string> ExecuteAsync(string command)
         {
-            var cleaned = command
-                .Replace("Availability(", "", StringComparison.OrdinalIgnoreCase)
-                .Replace(")", "", StringComparison.OrdinalIgnoreCase)
-                .Trim();
+            command = command.Trim();
 
-            var args = cleaned.Split(',');
+            // Regex: optional spaces
+            var pattern = @"^Availability\s*\(";
+            command = Regex.Replace(command, pattern, "", RegexOptions.IgnoreCase);
+
+            // Remove the final closing parenthesis if it exists
+            if (command.EndsWith(")"))
+            {
+                command = command.Substring(0, command.Length - 1).Trim();
+            }
+
+            var args = command.Split(',');
 
             if (args.Length != 3)
             {
@@ -39,14 +47,23 @@ namespace RoomScout.Business.Commands
             }
 
             var dates = dateInput.Split('-');
+            if (dates.Length < 1 || dates.Length > 2)
+            {
+                return $"Invalid date range format: '{dateInput}'";
+            }
+
             if (!DateTime.TryParseExact(dates[0], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var start))
+            {
                 return $"Invalid start date: '{dates[0]}'";
+            }
 
             DateTime? end = null;
             if (dates.Length == 2)
             {
                 if (!DateTime.TryParseExact(dates[1], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedEnd))
+                {
                     return $"Invalid end date: '{dates[1]}'";
+                }
 
                 end = parsedEnd;
             }
