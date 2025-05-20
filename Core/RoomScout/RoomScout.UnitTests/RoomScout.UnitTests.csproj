@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoomScout.Business\RoomScout.Business.csproj" />
+    <ProjectReference Include="..\RoomScout.Presentation\RoomScout.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
