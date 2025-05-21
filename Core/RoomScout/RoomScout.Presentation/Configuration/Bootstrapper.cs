@@ -10,11 +10,8 @@ namespace RoomScout.Presentation.Configuration
 {
     public class Bootstrapper : IBootstrapper
     {
-        public async Task<ICommandDispatcher> BuildAsync()
+        public async Task<ICommandDispatcher> BuildAsync(string hotelsPath, string bookingsPath)
         {
-            var hotelsPath = Path.Combine("SeedData", "hotels.json");
-            var bookingsPath = Path.Combine("SeedData", "bookings.json");
-
             var context = new DataContext();
             await context.InitializeAsync(hotelsPath, bookingsPath);
 

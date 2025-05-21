@@ -4,6 +4,6 @@ namespace RoomScout.Presentation.Configuration
 {
     public interface IBootstrapper
     {
-        Task<ICommandDispatcher> BuildAsync();
+        Task<ICommandDispatcher> BuildAsync(string hotelsPath, string bookingsPath);
     }
 }
