@@ -26,6 +26,12 @@ A C#/.NET console application for managing hotel room availability and search fu
 
 The application follows clean architecture principles. The business logic is isolated, testable, and decoupled from infrastructure concerns. Special care was taken to ensure the code is modular, readable, and easy to extend.
 
+Key design patterns used:
+- Strategy Pattern - for encapsulating different availability and search logic behaviors.
+- Command Pattern - for handling and executing different console commands in a clean, extendable way.
+- Repository Pattern - for abstracting data access and separating it from business logic.
+- Dependency Injection - used manually to decouple layers and promote testability and flexibility.
+
 ---
 
 ## Project Structure
