@@ -96,7 +96,7 @@ dotnet run --project RoomScout.Presentation --hotels path/to/hotels.json --booki
 Example:
 
 ![image](https://github.com/user-attachments/assets/a8672c4a-705a-433a-9404-f91f264d2405)
-![image-1](https://github.com/user-attachments/assets/15171f42-9102-4542-b1ae-c88dd56fe063)
+![image-1](https://github.com/user-attachments/assets/4417538c-0b59-4362-94dd-3ad529810c38)
 
 ---
 
